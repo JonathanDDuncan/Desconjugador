@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Elm App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="src/createdb.js"></script>
+</head>
+
+<body>
+    <input id="verb" />
+    <button id="submit">Submit</button>
+    <div id="result">
+
+
+    </div>
+    <div id="root"></div>
+    <script>
+        $("#submit").click(function() {
+            // alert($("#verb").val());
+            // console.log(window.verbresults);
+            var words = $("#verb").val().split(" ");
+            var show = "";
+            for (var key in words) {
+                if (words.hasOwnProperty(key)) {
+                    var word = words[key];
+
+                    var cleanedword = cleanword(word);
+                    var found = window.verbresults[cleanedword];
+                    if (found && found != []) {
+
+                        for (var key in found) {
+                            if (found.hasOwnProperty(key)) {
+                                var element = found[key];
+                                var expanded = expand(element);
+                                show = show + expanded + " " + JSON.stringify(found) + "<br/>" + "<br/>"
+                            }
+                        }
+                    } else
+                        show = show + word + "<br/>"
+                }
+            }
+
+            $("#result").html(show);
+        });
+
+        var expand = function(found) {
+            var pronomb = getpronombre(found);
+            var infinitive = found.infinitive;
+            var tiempo = gettiempo(found);
+            var modo = getmodo(found);
+
+            return tiempo + " " + pronomb + " " + modo + " " + infinitive;
+        };
+
+        var getpronombre = function(found) {
+            switch (found.form) {
+                case "form_1s":
+                    return "yo"
+                    break;
+                case "form_2s":
+                    return "tu"
+                    break;
+                case "form_3s":
+                    return "[él, ella, usted]"
+                    break;
+                case "form_1p":
+                    return "nosotros"
+                    break;
+                case "form_2p":
+                    return "[vosotros, ustedes]"
+                    break;
+                case "form_3p":
+                    return "[ellos, ellas, ustedes]"
+                    break;
+                default:
+                    return "";
+            }
+        };
+        var getmodo = function(found) {
+            switch (found.mood) {
+                case "Imperativo Afirmativo":
+                    return "debe"
+                    break;
+                case "Imperativo Negativo":
+                    return "no-debe"
+                    break;
+                case "Indicativo":
+                    return ""
+                    break;
+                case "Subjuntivo":
+                    return ""
+                    break;
+                default:
+                    return "";
+            }
+        };
+        var gettiempo = function(found) {
+
+            switch (found.tense) {
+                case "Presente":
+                    return ""
+                    break;
+                case "Condicional":
+                    return "si"
+                    break;
+                case "Condicional perfecto":
+                    return "si"
+                    break;
+                case "Futuro":
+                    return "futuro"
+                    break;
+                case "Futuro perfecto":
+                    return "futuro"
+                    break;
+                case "Imperfecto":
+                    return "antes"
+                    break;
+                case "Pluscuamperfecto":
+                    return "antes antes"
+                    break;
+                case "Presente perfecto":
+                    return ""
+                    break;
+                case "Pretérito":
+                    return "antes"
+                    break;
+                case "Pretérito anterior":
+                    return "ya"
+                    break;
+                default:
+                    return "";
+            }
+
+
+        };
+
+        var cleanword = function(word) {
+            word = word.replace(/[.*+?^${}()?¡!¡¿| [\]\\]/g, "")
+            word = word.toLowerCase();
+            return word;
+        };
+    </script>
+</body>
+
+</html>
