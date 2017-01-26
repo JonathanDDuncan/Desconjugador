@@ -89,7 +89,7 @@
      return obj;
  };
 
- $.getJSON('src/jehle_verb_database.json', function(response) {
+ $.getJSON('./src/jehle_verb_database.json', function(response) {
      cdata = response.data;
      //.slice(0, 4);
      verbresults = createobjects(cdata);
