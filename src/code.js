@@ -96,28 +96,72 @@
      // alert($("#verb").val());
      // console.log(window.verbresults);
      var words = $("#verb").val().split(" ");
-     var show = "";
+     var worditems = [];
      var first = true;
      for (var key in words) {
          if (words.hasOwnProperty(key)) {
              var word = words[key];
 
-             var cleanedword = cleanword(word);
-             var found = window.verbresults[cleanedword];
+             //  var cleanedword = cleanword(word);
+             //  var found = window.verbresults[cleanedword];
 
-             if (found && found != []) {
-                 show = show + "<span class = 'posibilidades'>"
-                 show = show + showverb(found, first, word);
-                 show = show + "</span>";
-             } else {
-                 show = show + word + " ";
-             }
+             //  if (found && found != []) {
+             //      show = show + "<span class = 'posibilidades'>"
+             //      show = show + showverb(found, first, word);
+             //      show = show + "</span>";
+             //  } else {
+             worditems.push(createworditem(word))
+
+             //  }
          }
          first = false;
      }
-     $("#result").html(show);
+
+     var view = createview(worditems);
+
+     $("#result").html(view);
  });
 
+ var createworditem = function(word) {
+     var item = {};
+     item.type = "";
+     item.originalword = word;
+
+     return item;
+ };
+
+ var createview = function(worditems) {
+     var view = ""
+
+     for (var key in worditems) {
+         if (worditems.hasOwnProperty(key)) {
+             var element = worditems[key];
+
+             if (element.type == "verb") {
+                 view = view + "<div class = 'entry'>" + "<span class = 'word'>" + wordtypes() + "</span>" + "<span class = 'posibilidades'>" + element.originalword + " " + "</span>" + "</div>";
+             } else {
+                 view = view + "<div class = 'entry'>" + "<span class = 'word'>" + wordtypes() + "</span>" + "<span class = 'word'>" + element.originalword + " " + "</span>" + "</div>";
+             }
+
+         }
+     }
+     return view;
+ };
+
+ var wordtypes = function() {
+     return '<select>' +
+         '<option value = "articulo" >Artículo</option>' +
+         '<option value = "sustantivo" >Sustantivo</option>' +
+         '<option value = "pronombre" >Pronombre</option>' +
+         '<option value = "adjetivo" >Adjetivo</option>' +
+         '<option value = "verbo" >Verbo</option>' +
+         '<option value = "adverbio" >Adverbio</option>' +
+         '<option value = "preposicion" >Preposición</option>' +
+         '<option value = "conjuncion" >Conjunción</option>' +
+         '<option value = "interjeccion" >Interjección</option>' +
+
+         '</select>'
+ };
  var showverb = function(found, first, word) {
 
      for (var key in found) {
