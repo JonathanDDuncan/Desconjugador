@@ -141,13 +141,17 @@
  });
  var crearoracion = function() {
      var oracion = ""
-     oracion += $('#inputtiempo').val() + " ";
-     oracion += $('#inputlugar').val() + " ";
-     oracion += $('#inputobjeto').val() + " ";
-     oracion += $('#inputsujeto').val() + " ";
-     oracion += $('#inputverbo').val() + " ";
-     oracion += $('#inputpregunta').val() + " ";
-
+     oracion += $('#inputtiempo').val().trim() + " ";
+     oracion += $('#inputlugar').val().trim() + " ";
+     oracion += $('#inputobjeto').val().trim() + " ";
+     oracion += $('#inputsujeto').val().trim() + " ";
+     oracion += $('#inputverbo').val().trim() + " ";
+     oracion += $('#inputpregunta').val().trim() + " ";
+     oracion = oracion.replace(".", "");
+     oracion = oracion.replace("   ", " ");
+     oracion = oracion.replace("  ", " ");
+     oracion = oracion.trim();
+     oracion += ".";
      return oracion;
  };
  var createworditem = function(word) {
@@ -172,25 +176,30 @@
 
              switch (element.type) {
                  case "tiempo":
-                     $('#inputtiempo').val($('#inputtiempo').val() + " " + element.originalword)
+                     $('#inputtiempo').val($('#inputtiempo').val().trim() + " " + element.originalword)
                      break;
                  case "lugar":
-                     $('#inputlugar').val($('#inputlugar').val() + " " + element.originalword)
+                     $('#inputlugar').val($('#inputlugar').val().trim() + " " + element.originalword)
                      break;
                  case "objecto":
-                     $('#inputobjeto').val($('#inputobjeto').val() + " " + element.originalword)
+                     $('#inputobjeto').val($('#inputobjeto').val().trim() + " " + element.originalword)
                      break;
                  case "sujeto":
-                     $('#inputsujeto').val($('#inputsujeto').val() + " " + element.originalword)
+                     $('#inputsujeto').val($('#inputsujeto').val().trim() + " " + element.originalword)
                      break;
                  case "verbo":
-                     var analizado = expand(getverb(element.originalword)[0]);
-                     $('#inputtiempo').val($('#inputtiempo').val() + " " + analizado.tiempo)
-                     $('#inputsujeto').val($('#inputsujeto').val() + " " + analizado.pronomb)
-                     $('#inputverbo').val($('#inputverbo').val() + " " + analizado.modo + " " + analizado.infinitive)
+                     var result = getverb(element.originalword);
+                     if (result) {
+                         var analizado = expand(result[0]);
+                         $('#inputtiempo').val($('#inputtiempo').val().trim() + " " + analizado.tiempo)
+                         $('#inputsujeto').val($('#inputsujeto').val().trim() + " " + analizado.pronomb)
+                         $('#inputverbo').val($('#inputverbo').val().trim() + " " + analizado.modo + " " + analizado.infinitive)
+                     } else {
+                         $('#inputverbo').val($('#inputverbo').val().trim() + " " + element.originalword)
+                     }
                      break;
                  case "pregunta":
-                     $('#inputpregunta').val($('#inputpregunta').val() + " " + element.originalword)
+                     $('#inputpregunta').val($('#inputpregunta').val().trim() + " " + element.originalword)
                      break;
 
                  default:
