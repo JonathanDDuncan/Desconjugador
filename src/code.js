@@ -55,6 +55,16 @@
      console.log(i + "!");
      return result;
  };
+ var guid = function() {
+     return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+         s4() + '-' + s4() + s4() + s4();
+ }
+
+ var s4 = function() {
+     return Math.floor((1 + Math.random()) * 0x10000)
+         .toString(16)
+         .substring(1);
+ }
  var createobject = function(header, row) {
 
      var arr1 = [createobj(row, 7, "form_1s"),
@@ -116,20 +126,80 @@
          }
          first = false;
      }
-
+     window.worditems = worditems;
      var view = createview(worditems);
 
      $("#result").html(view);
  });
 
+
+ $("#analizar").click(function() {
+     categorizar(worditems);
+     var oracion = crearoracion();
+
+     $("#oracion").val(oracion);
+ });
+ var crearoracion = function() {
+     var oracion = ""
+     oracion += $('#inputtiempo').val() + " ";
+     oracion += $('#inputlugar').val() + " ";
+     oracion += $('#inputobjeto').val() + " ";
+     oracion += $('#inputsujeto').val() + " ";
+     oracion += $('#inputverbo').val() + " ";
+     oracion += $('#inputpregunta').val() + " ";
+
+     return oracion;
+ };
  var createworditem = function(word) {
      var item = {};
      item.type = "";
      item.originalword = word;
+     item.guid = guid();
 
      return item;
  };
+ var categorizar = function(worditems) {
 
+     $('#inputtiempo').val("");
+     $('#inputlugar').val("");
+     $('#inputobjeto').val("");
+     $('#inputsujeto').val("");
+     $('#inputverbo').val("");
+     $('#inputpregunta').val("");
+     for (var key in worditems) {
+         if (worditems.hasOwnProperty(key)) {
+             var element = worditems[key];
+
+             switch (element.type) {
+                 case "tiempo":
+                     $('#inputtiempo').val($('#inputtiempo').val() + " " + element.originalword)
+                     break;
+                 case "lugar":
+                     $('#inputlugar').val($('#inputlugar').val() + " " + element.originalword)
+                     break;
+                 case "objecto":
+                     $('#inputobjeto').val($('#inputobjeto').val() + " " + element.originalword)
+                     break;
+                 case "sujeto":
+                     $('#inputsujeto').val($('#inputsujeto').val() + " " + element.originalword)
+                     break;
+                 case "verbo":
+                     var analizado = expand(getverb(element.originalword)[0]);
+                     $('#inputtiempo').val($('#inputtiempo').val() + " " + analizado.tiempo)
+                     $('#inputsujeto').val($('#inputsujeto').val() + " " + analizado.pronomb)
+                     $('#inputverbo').val($('#inputverbo').val() + " " + analizado.modo + " " + analizado.infinitive)
+                     break;
+                 case "pregunta":
+                     $('#inputpregunta').val($('#inputpregunta').val() + " " + element.originalword)
+                     break;
+
+                 default:
+
+             }
+         }
+
+     }
+ };
  var createview = function(worditems) {
      var view = ""
 
@@ -138,9 +208,9 @@
              var element = worditems[key];
 
              if (element.type == "verb") {
-                 view = view + "<div class = 'entry'>" + "<span class = 'word'>" + wordtypes() + "</span>" + "<span class = 'posibilidades'>" + element.originalword + " " + "</span>" + "</div>";
+                 view = view + "<div class = 'entry'>" + "<span class = 'word'>" + wordtypes(element.guid) + "</span>" + "<span class = 'posibilidades'>" + element.originalword + " " + "</span>" + "</div>";
              } else {
-                 view = view + "<div class = 'entry'>" + "<span class = 'word'>" + wordtypes() + "</span>" + "<span class = 'word'>" + element.originalword + " " + "</span>" + "</div>";
+                 view = view + "<div class = 'entry'>" + "<span class = 'word'>" + wordtypes(element.guid) + "</span>" + "<span class = 'word'>" + element.originalword + " " + "</span>" + "</div>";
              }
 
          }
@@ -148,20 +218,31 @@
      return view;
  };
 
- var wordtypes = function() {
-     return '<select>' +
-         '<option value = "articulo" >Artículo</option>' +
-         '<option value = "sustantivo" >Sustantivo</option>' +
-         '<option value = "pronombre" >Pronombre</option>' +
-         '<option value = "adjetivo" >Adjetivo</option>' +
-         '<option value = "verbo" >Verbo</option>' +
-         '<option value = "adverbio" >Adverbio</option>' +
-         '<option value = "preposicion" >Preposición</option>' +
-         '<option value = "conjuncion" >Conjunción</option>' +
-         '<option value = "interjeccion" >Interjección</option>' +
-
+ var wordtypes = function(guid) {
+     return '<select id="' + guid + '" onchange="typechange(this.id,this.value)">' +
+         '<option value = "" ></option>' +
+         '<option value = "tiempo" >tiempo, ¿Cuándo?</option>' +
+         '<option value = "lugar" >lugar, ¿Dónde?</option>' +
+         '<option value = "objecto" >objecto, ¿Qué?</option>' +
+         '<option value = "sujeto" >sujeto, ¿Quién?</option>' +
+         '<option value = "verbo" >verbo, ¿Qué hacen?</option>' +
+         '<option value = "pregunta" >pregunta</option>' +
          '</select>'
  };
+ var typechange = function(id, value) {
+     var object = window.worditems;
+     for (var key in object) {
+         if (object.hasOwnProperty(key)) {
+             var element = object[key];
+
+             if (element.guid == id) {
+                 element.type = value;
+                 //  alert(JSON.stringify(element));
+             }
+
+         }
+     }
+ }
  var showverb = function(found, first, word) {
 
      for (var key in found) {
@@ -171,8 +252,6 @@
              var expanded = expand(element);
              show = "<span class = 'desconjugado'>" + expanded + "</span>" + " " + "<span class = 'verbo'>" + word + "</span>" + " "
                  //  JSON.stringify(found) +
-
-
          }
      }
      return show;
@@ -182,8 +261,13 @@
      var infinitive = found.infinitive;
      var tiempo = gettiempo(found);
      var modo = getmodo(found);
+     var obj = {};
+     obj.tiempo = tiempo;
+     obj.pronomb = pronomb;
+     obj.modo = modo;
+     obj.infinitive = infinitive;
 
-     return tiempo + " " + pronomb + " " + modo + " " + infinitive;
+     return obj;
  };
 
  var getpronombre = function(found) {
