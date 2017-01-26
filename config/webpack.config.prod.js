@@ -22,7 +22,7 @@ module.exports = {
         publicPath: '/',
 
         // Generated JS files.
-        filename: './js/[name].[chunkhash:8].js'
+        filename: '/js/[name].[chunkhash:8].js'
     },
     resolveLoader: {
 
