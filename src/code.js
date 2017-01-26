@@ -89,7 +89,7 @@
      return obj;
  };
 
- $.getJSON('jehle_verb_database.json', function(response) {
+ $.getJSON('https://jonathandduncan.github.io/Desconjugador/jehle_verb_database.json', function(response) {
      cdata = response.data;
      //.slice(0, 4);
      verbresults = createobjects(cdata);
