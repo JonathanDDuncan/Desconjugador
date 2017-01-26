@@ -1,4 +1,4 @@
-xcopy dist\*.* published /s /y /d 
+xcopy dist\*.* published /s /y 
 rem Please commit any changes to the publish folder
 pause
 git branch -dr origin/gh-pages
