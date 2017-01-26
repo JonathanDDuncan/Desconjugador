@@ -7,6 +7,22 @@
     <title>Elm App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="src/createdb.js"></script>
+    <style>
+        .desconjugado {
+            color: blue;
+        }
+        
+        .verbo {
+            color: red;
+        }
+        
+        .posibilidades {
+            border: 2px;
+            border-color: cyan;
+            padding: 4px;
+            border-style: solid;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,35 +33,49 @@
 
     </div>
     <div id="root"></div>
+
     <script>
         $("#submit").click(function() {
             // alert($("#verb").val());
             // console.log(window.verbresults);
             var words = $("#verb").val().split(" ");
             var show = "";
+            var first = true;
             for (var key in words) {
                 if (words.hasOwnProperty(key)) {
                     var word = words[key];
 
                     var cleanedword = cleanword(word);
                     var found = window.verbresults[cleanedword];
+
                     if (found && found != []) {
-
-                        for (var key in found) {
-                            if (found.hasOwnProperty(key)) {
-                                var element = found[key];
-                                var expanded = expand(element);
-                                show = show + expanded + " " + JSON.stringify(found) + "<br/>" + "<br/>"
-                            }
-                        }
-                    } else
-                        show = show + word + "<br/>"
+                        show = show + "<span class = 'posibilidades'>"
+                        show = show + showverb(found, first, word);
+                        show = show + "</span>";
+                    } else {
+                        show = show + word + " ";
+                    }
                 }
+                first = false;
             }
-
             $("#result").html(show);
         });
 
+        var showverb = function(found, first, word) {
+
+            for (var key in found) {
+                if (found.hasOwnProperty(key)) {
+                    var element = found[key];
+
+                    var expanded = expand(element);
+                    show = "<span class = 'desconjugado'>" + expanded + "</span>" + " " + "<span class = 'verbo'>" + word + "</span>" + " "
+                        //  JSON.stringify(found) +
+
+
+                }
+            }
+            return show;
+        };
         var expand = function(found) {
             var pronomb = getpronombre(found);
             var infinitive = found.infinitive;
@@ -64,16 +94,16 @@
                     return "tu"
                     break;
                 case "form_3s":
-                    return "[él, ella, usted]"
+                    return "él"
                     break;
                 case "form_1p":
                     return "nosotros"
                     break;
                 case "form_2p":
-                    return "[vosotros, ustedes]"
+                    return "ustedes"
                     break;
                 case "form_3p":
-                    return "[ellos, ellas, ustedes]"
+                    return "ellos"
                     break;
                 default:
                     return "";

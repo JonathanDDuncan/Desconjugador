@@ -1,9 +1,9 @@
 var save1 = function(result, element) {
     var prevvalue = result[element.conjugation];
-    console.log(prevvalue);
+    // console.log(prevvalue);
     if (prevvalue && isArray(prevvalue)) {
         var newval = prevvalue.concat([element])
-        console.log(newval);
+            // console.log(newval);
         result[element.conjugation] = newval;
 
 
@@ -52,8 +52,8 @@ var createobjects = function(data) {
 
     }
     // console.log(result);
+    console.log(i + "!");
     return result;
-
 };
 var createobject = function(header, row) {
 
@@ -68,7 +68,6 @@ var createobject = function(header, row) {
 };
 
 var createobj = function(row, form, formname) {
-
     var obj = {
 
         infinitive: row[0],
@@ -80,15 +79,11 @@ var createobj = function(row, form, formname) {
     return obj;
 };
 
-
 $.getJSON('/src/jehle_verb_database.json', function(response) {
     cdata = response.data;
     //.slice(0, 4);
-
-
     verbresults = createobjects(cdata);
     window.verbresults = verbresults;
-    document.getElementById("result").innerHTML = "ready";
 
-    // getverb("abandono");
+    document.getElementById("result").innerHTML = "listo";
 })
